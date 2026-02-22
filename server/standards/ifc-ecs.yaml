@@ -13,6 +13,8 @@ servers:
     description: Production server
 
 tags:
+  - name: UI
+    description: User interface pages
   - name: System
     description: Server status and configuration endpoints
   - name: File Management
@@ -23,6 +25,36 @@ tags:
     description: Data store and refresh endpoints
 
 paths:
+  /:
+    get:
+      tags:
+        - UI
+      summary: Admin page
+      description: Serves the admin panel for managing IFC files
+      operationId: adminPage
+      responses:
+        '200':
+          description: HTML admin page
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /viewer:
+    get:
+      tags:
+        - UI
+      summary: Advanced viewer page
+      description: Serves the advanced IFC file viewer
+      operationId: viewerPage
+      responses:
+        '200':
+          description: HTML viewer page
+          content:
+            text/html:
+              schema:
+                type: string
+
   /api/status:
     get:
       tags:
@@ -173,6 +205,108 @@ paths:
                   type: string
                 example:
                   - HelloWallIFCjsonC-2x3
+
+  /api/models/details:
+    get:
+      tags:
+        - Queries
+      summary: List all models with metadata
+      description: Returns a list of all available models with detailed information (file-based store only)
+      operationId: listModelsDetails
+      responses:
+        '200':
+          description: List of models with metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  models:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: HelloWall-01
+                        path:
+                          type: string
+                          example: /path/to/datastore/HelloWall-01
+                        componentCount:
+                          type: integer
+                          example: 42
+        '501':
+          description: Not available for non-file-based data stores
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/models/delete:
+    post:
+      tags:
+        - Data Management
+      summary: Delete one or more models
+      description: Deletes specified models and refreshes the in-memory component tree (file-based store only)
+      operationId: deleteModels
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                models:
+                  type: array
+                  items:
+                    type: string
+                  description: List of model names to delete
+                  example: ["HelloWall-01"]
+              required:
+                - models
+      responses:
+        '200':
+          description: Models successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: array
+                    items:
+                      type: string
+                    example: ["HelloWall-01"]
+                  missing:
+                    type: array
+                    items:
+                      type: string
+                    description: Models that were not found
+                    example: []
+                  models_loaded:
+                    type: integer
+                    example: 1
+        '400':
+          description: Invalid request (no models specified)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '501':
+          description: Not available for non-file-based data stores
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /api/entityTypes:
     get:
@@ -424,6 +558,43 @@ paths:
                     example: 'Memory tree refreshed with 1 model(s)'
         '500':
           description: Server error during refresh
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/componentTypes:
+    get:
+      tags:
+        - Queries
+      summary: List component types
+      description: Returns all component types available in specified models
+      operationId: listComponentTypes
+      parameters:
+        - name: models
+          in: query
+          description: Comma-separated list of model names (optional - returns types from all models if omitted)
+          schema:
+            type: string
+            example: HelloWall-01
+      responses:
+        '200':
+          description: List of component types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - IfcPropertySetComponent
+                  - IfcWallStandardCaseComponent
+                  - IfcRelDefinesByPropertiesComponent
+        '400':
+          description: Invalid query parameters
           content:
             application/json:
               schema:

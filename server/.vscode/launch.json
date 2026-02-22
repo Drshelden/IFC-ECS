@@ -2,16 +2,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ifc4ingestor2",
+            "name": "ifc4ingestor",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/ingestors/ifc4ingestor2.py",
+            "program": "${workspaceFolder}/ingestors/ifc4ingestor.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "ingestors/HelloWall-01.ifc",
+                "ingestors/HelloWall-03.ifc",
                 "-o",
-                "ingestors/HelloWall-01.json"
+                "ingestors/HelloWall-03.json"
             ]
         },
         {

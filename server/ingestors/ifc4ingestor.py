@@ -176,6 +176,23 @@ class IFC2JSONSimple:
             # entityAttributes['entityGuid'] = ""
             entityAttributes['componentGuid'] = expandGuid(entityAttributes['globalId']) 
             entityAttributes.pop('globalId', None)
+            
+            # Find the first key starting with 'Relating' and use its value as entityGuid
+            relating_keys = sorted([key for key in entityAttributes.keys() if key.startswith('relating')])
+            if relating_keys:
+                first_relating_key = relating_keys[0]
+                relating_value = entityAttributes[first_relating_key]
+                # Extract entityGuid from the relating entity
+                if isinstance(relating_value, str):
+                    entityAttributes['entityGuid'] = expandGuid(relating_value)
+                    #entityAttributes.pop(first_relating_key, None)
+                elif hasattr(relating_value, 'GlobalId'): # not sure about this case.
+                    entityAttributes['entityGuid'] = expandGuid(relating_value.GlobalId)
+                    #entityAttributes.pop(first_relating_key, None)
+                else:
+                   entityAttributes['entityGuid'] = ""
+
+
 
 
         if(entity.is_a('IfcPropertySet')):
