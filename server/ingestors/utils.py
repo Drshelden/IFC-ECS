@@ -14,9 +14,14 @@ def toLowerCamelcase(string):
 def expandGuid(entityGuid):
     if guid is None:
         raise RuntimeError("ifcopenshell not available - cannot expand GUID")
-    expanded = guid.expand(entityGuid)
-    # Format as UUID with dashes: 8-4-4-4-12
-    return str(uuid.UUID(expanded))
+    try:
+        expanded = guid.expand(entityGuid)
+        # Format as UUID with dashes: 8-4-4-4-12
+        return str(uuid.UUID(expanded))
+    except Exception as e:
+        # If GUID expansion fails (e.g., malformed GUID), return the original GUID
+        print(f"Warning: Could not expand GUID '{entityGuid}': {e}. Using original value.")
+        return entityGuid
 
 def generateDeterministicGuid(modelName, componentType, entityGuid):
     """Generate a deterministic GUID based on model name, component type and entity GUID

@@ -216,6 +216,10 @@
             border-left-color: #0078cc;
         }
 
+        .tree-item-content code[data-guid-value] {
+            cursor: pointer;
+        }
+
         .tree-toggle {
             width: 16px;
             height: 16px;
@@ -362,6 +366,8 @@
         #canvas3d {
             flex: 1;
             background: #1a1a1a;
+            display: block;
+            min-height: 0;
         }
 
         .viewer-controls {
@@ -371,6 +377,7 @@
             border-top: 1px solid #444;
             background: #252525;
             font-size: 11px;
+            flex-shrink: 0;
         }
 
         .viewer-control-group {
@@ -403,6 +410,51 @@
             width: 1px;
             height: 16px;
             background: #444;
+        }
+
+        /* Zoom All Button Icon */
+        .zoom-all-btn {
+            padding: 4px 8px;
+            font-size: 16px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            font-family: monospace;
+        }
+
+        /* Notification Message */
+        .notification {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            background: #2d2d2d;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 12px 16px;
+            color: #e0e0e0;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 300px;
+        }
+
+        .notification.warning {
+            border-color: #ff9800;
+            background: #3d2f1f;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         /* Bottom Panel - Data Table */
@@ -551,6 +603,7 @@
                     type="text" 
                     id="queryInput" 
                     placeholder="Enter REST query (e.g., http://localhost:5000/api/entityGuids?entityTypes=IfcWall or /api/componentGuids?models=HelloWall)"
+                    value="http://localhost:5000/api/components"
                 >
                 <button id="executeBtn">Execute</button>
                 <button id="clearBtn" title="Clear results">Clear</button>
@@ -613,8 +666,7 @@
                             <label for="showAxes">Axes</label>
                         </div>
                         <div class="control-separator"></div>
-                        <button id="resetView" style="padding: 4px 12px; font-size: 11px;">Reset View</button>
-                        <button id="fitAll" style="padding: 4px 12px; font-size: 11px;">Fit All</button>
+                        <button id="zoomAll" class="zoom-all-btn" title="Frame All (zoom to fit all visible objects)">⛶</button>
                     </div>
                 </div>
 
@@ -763,14 +815,7 @@
                 axesHelper.visible = e.target.checked;
             });
 
-            document.getElementById('resetView').addEventListener('click', () => {
-                camera.up.set(0, 0, 1); // Z axis points up
-                camera.position.set(-100, -100, 100); // View from back-left-top
-                panTarget.set(0, 0, 0); // Reset pan target to origin
-                camera.lookAt(0, 0, 0);
-            });
-
-            document.getElementById('fitAll').addEventListener('click', fitAllObjects);
+            document.getElementById('zoomAll').addEventListener('click', () => zoomToSelected(true));
         }
 
         function setupMouseControls() {
@@ -852,22 +897,45 @@
             });
         }
 
-        function fitAllObjects() {
+        function showNotification(message, type = 'info') {
+            // Remove any existing notification
+            const existing = document.querySelector('.notification');
+            if (existing) {
+                existing.remove();
+            }
+
+            // Create new notification
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function zoomToSelected(showNotifications = false) {
             if (objects3d.size === 0) {
-                console.log("fitAllObjects: No objects to fit");
+                console.log("zoomToSelected: No objects loaded");
+                if (showNotifications) showNotification('Nothing visible', 'warning');
                 return;
             }
 
-            console.log(`📏 fitAllObjects: Calculating bounds for ${objects3d.size} objects`);
+            console.log(`📏 zoomToSelected: Framing ${objects3d.size} objects${showNotifications ? ' (manual)' : ' (auto)'}`);
             
             let minX = Infinity, maxX = -Infinity;
             let minY = Infinity, maxY = -Infinity;
             let minZ = Infinity, maxZ = -Infinity;
             let validMeshes = 0;
+            let invisibleCount = 0;
 
+            // Zoom to all visible meshes
             objects3d.forEach((mesh, guid) => {
                 if (!mesh.visible) {
-                    console.log(`  Skipping invisible mesh: ${guid}`);
+                    invisibleCount++;
                     return;
                 }
 
@@ -885,15 +953,16 @@
                 minZ = Math.min(minZ, box.min.z);
                 maxZ = Math.max(maxZ, box.max.z);
                 validMeshes++;
-                console.log(`  Mesh ${guid.substring(0, 20)}... bounds: (${box.min.x.toFixed(2)}, ${box.min.y.toFixed(2)}, ${box.min.z.toFixed(2)}) to (${box.max.x.toFixed(2)}, ${box.max.y.toFixed(2)}, ${box.max.z.toFixed(2)})`);
             });
 
             if (validMeshes === 0) {
-                console.warn("fitAllObjects: No visible meshes with valid bounds");
+                console.warn(`zoomToSelected: No visible meshes with valid bounds`);
+                console.warn(`  Summary: ${objects3d.size} total, ${invisibleCount} invisible, ${validMeshes} valid`);
+                if (showNotifications) showNotification('Nothing visible', 'warning');
                 return;
             }
 
-            console.log(`✓ Valid bounds from ${validMeshes} meshes`);
+            console.log(`✓ Framing ${validMeshes} visible meshes (${invisibleCount} invisible)`);
             console.log(`  Overall bounds: (${minX.toFixed(2)}, ${minY.toFixed(2)}, ${minZ.toFixed(2)}) to (${maxX.toFixed(2)}, ${maxY.toFixed(2)}, ${maxZ.toFixed(2)})`);
 
             const centerX = (minX + maxX) / 2;
@@ -908,21 +977,53 @@
             console.log(`  Center: (${centerX.toFixed(2)}, ${centerY.toFixed(2)}, ${centerZ.toFixed(2)})`);
             console.log(`  Size: ${sizeX.toFixed(2)} x ${sizeY.toFixed(2)} x ${sizeZ.toFixed(2)}, max: ${maxSize.toFixed(2)}`);
 
-            // Calculate distance with buffer to ensure full view
+            // Calculate distance to fit objects in view (reduced buffer for tighter framing)
             const vFOV = camera.fov * Math.PI / 180; // convert vertical FOV to radians
-            const distance = (maxSize / 2) / Math.tan(vFOV / 2) + (maxSize * 0.2); // add 20% buffer
+            const distance = (maxSize / 2) / Math.tan(vFOV / 2) * 1.75; // 1.75x for comfortable view with less distortion
 
             console.log(`  Positioning camera at distance ${distance.toFixed(2)} from center`);
             
+            // Calculate the offset to move both camera and target
+            const currentTargetX = panTarget.x;
+            const currentTargetY = panTarget.y;
+            const currentTargetZ = panTarget.z;
+            const deltaX = centerX - currentTargetX;
+            const deltaY = centerY - currentTargetY;
+            const deltaZ = centerZ - currentTargetZ;
+
             // Set the pan target to the center of the bounding box
             panTarget.set(centerX, centerY, centerZ);
             
+            // Move camera by the same delta
+            camera.position.x += deltaX;
+            camera.position.y += deltaY;
+            camera.position.z += deltaZ;
+
             camera.up.set(0, 0, 1); // Ensure Z points up
-            camera.position.set(
-                centerX - distance * 0.866, // position from back-left-top
-                centerY - distance * 0.866,
-                centerZ + distance * 0.866
-            );
+            
+            // Now adjust camera distance from the target
+            const dirX = camera.position.x - centerX;
+            const dirY = camera.position.y - centerY;
+            const dirZ = camera.position.z - centerZ;
+            const currentDistance = Math.sqrt(dirX*dirX + dirY*dirY + dirZ*dirZ);
+            
+            if (currentDistance > 0.001) {
+                // Normalize and scale to desired distance
+                const scale = distance / currentDistance;
+                camera.position.set(
+                    centerX + dirX * scale,
+                    centerY + dirY * scale,
+                    centerZ + dirZ * scale
+                );
+            } else {
+                // Fallback if camera is at target: use default isometric view
+                camera.position.set(
+                    centerX - distance * 0.866,
+                    centerY - distance * 0.866,
+                    centerZ + distance * 0.866
+                );
+            }
+            
             camera.lookAt(centerX, centerY, centerZ);
             
             console.log(`  Camera position: (${camera.position.x.toFixed(2)}, ${camera.position.y.toFixed(2)}, ${camera.position.z.toFixed(2)})`);
@@ -1685,11 +1786,122 @@
                     setTimeout(() => {
                         console.log('🎨 Second updateMaterialColors pass (after 100ms delay)');
                         updateMaterialColors();
+                        // Auto-zoom to all selected objects after query completes
+                        console.log('🔍 Auto-zooming to selected objects after query load');
+                        zoomToSelected();
                     }, 100);
                 } catch (e) {
                     console.error('Error updating UI after loading:', e);
                 }
             }
+        }
+
+        const guidPattern = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/;
+
+        function extractGuidFromText(text) {
+            if (!text) return null;
+            const match = text.match(guidPattern);
+            return match ? match[0] : null;
+        }
+
+        function escapeForSelector(value) {
+            if (window.CSS && CSS.escape) return CSS.escape(value);
+            return value.replace(/([ #;?%&,.+*~':"!^$\[\]()=>|/@])/g, '\\$1');
+        }
+
+        function clearTreeSelection(container) {
+            selectedGuids.clear();
+            const allCheckboxes = container.querySelectorAll('.tree-checkbox');
+            allCheckboxes.forEach(cb => {
+                cb.checked = false;
+            });
+            const selectedItems = container.querySelectorAll('.tree-item.selected');
+            selectedItems.forEach(item => item.classList.remove('selected'));
+        }
+
+        function expandToTreeItem(treeItem) {
+            let current = treeItem;
+            while (current && current.classList && current.classList.contains('tree-item')) {
+                current.classList.add('expanded');
+                current = current.parentElement ? current.parentElement.closest('.tree-item') : null;
+            }
+        }
+
+        function selectTreeItemByGuid(guid) {
+            const container = document.getElementById('treeContainer');
+            if (!container || !guid) return false;
+
+            const safeGuid = escapeForSelector(guid);
+            let treeItem = null;
+
+            if (currentData && currentData.components && currentData.components[guid]) {
+                treeItem = container.querySelector(`.tree-item[data-type="component"][data-guid="${safeGuid}"]`);
+            }
+
+            if (!treeItem) {
+                treeItem = container.querySelector(`.tree-item[data-type="entity"][data-guid="${safeGuid}"]`);
+            }
+
+            if (!treeItem) return false;
+
+            clearTreeSelection(container);
+            expandToTreeItem(treeItem);
+            treeItem.classList.add('selected');
+
+            const itemType = treeItem.dataset.type;
+            if (itemType === 'entity') {
+                const entityCheckbox = treeItem.querySelector('.tree-checkbox');
+                if (entityCheckbox) entityCheckbox.checked = true;
+                const componentItems = treeItem.querySelectorAll('.tree-children .tree-item[data-type="component"]');
+                componentItems.forEach(componentItem => {
+                    const componentGuid = componentItem.dataset.guid;
+                    const componentCheckbox = componentItem.querySelector('.tree-checkbox');
+                    if (componentCheckbox) componentCheckbox.checked = true;
+                    if (componentGuid) {
+                        selectedGuids.add(componentGuid);
+                        renderComponentShapes(componentGuid, currentData?.components?.[componentGuid]);
+                    }
+                });
+            } else if (itemType === 'component') {
+                const componentCheckbox = treeItem.querySelector('.tree-checkbox');
+                if (componentCheckbox) componentCheckbox.checked = true;
+                selectedGuids.add(guid);
+                renderComponentShapes(guid, currentData?.components?.[guid]);
+            }
+
+            updateComponentVisibility();
+            updateTableForSelection();
+
+            treeItem.scrollIntoView({ block: 'center' });
+            return true;
+        }
+
+        function setupGuidNavigation() {
+            const container = document.getElementById('treeContainer');
+            if (!container || container.dataset.guidNavReady === 'true') return;
+            container.dataset.guidNavReady = 'true';
+
+            container.addEventListener('click', (event) => {
+                if (event.target.closest('.tree-toggle, .tree-checkbox')) return;
+
+                const targetNode = event.target.nodeType === Node.TEXT_NODE ? event.target.parentElement : event.target;
+                const guidTarget = targetNode ? targetNode.closest('[data-guid-value]') : null;
+                if (!guidTarget) return;
+                const guid = guidTarget.dataset.guidValue;
+                if (!guid) return;
+                const handled = selectTreeItemByGuid(guid);
+                if (handled) {
+                    event.stopPropagation();
+                }
+            }, true);
+        }
+
+        function clearGuidSelection() {
+            const container = document.getElementById('treeContainer');
+            if (!container) return;
+            clearTreeSelection(container);
+            updateComponentVisibility();
+            updateTableForSelection();
         }
 
         function getIconForType(type, componentData) {
@@ -1907,11 +2119,23 @@
             } else {
                 // Regular primitive property item
                 const escapedValue = valueStr.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                const guidValue = extractGuidFromText(valueStr);
+                const guidAttribute = guidValue ? ` data-guid-value="${guidValue}"` : '';
                 item.innerHTML = `
                     <div class="tree-item-content" style="padding-left: 32px; cursor: default;">
-                        <span class="tree-label"><strong>${key}:</strong> <code style="background: #3a3a3a; padding: 2px 4px; border-radius: 2px; color: #0098ff; font-family: monospace; font-size: 11px;">${escapedValue}</code></span>
+                        <span class="tree-label"><strong>${key}:</strong> <code${guidAttribute} style="background: #3a3a3a; padding: 2px 4px; border-radius: 2px; color: #0098ff; font-family: monospace; font-size: 11px;">${escapedValue}</code></span>
                     </div>
                 `;
+
+                if (guidValue) {
+                    const codeEl = item.querySelector('code');
+                    if (codeEl) {
+                        codeEl.addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            selectTreeItemByGuid(guidValue);
+                        });
+                    }
+                }
             }
             
             return item;
@@ -2038,7 +2262,7 @@
             `;
 
             rows.forEach(row => {
-                const guidShort = row.componentGuid.substring(0, 8) + '...';
+                const guidShort = row.guid.substring(0, 8) + '...';
                 const valueStr = String(row.value).length > 100 
                     ? String(row.value).substring(0, 97) + '...'
                     : row.value;
@@ -2415,6 +2639,13 @@
             init3DViewer();
             setupTabSwitching();
             setupSplitter();
+            setupGuidNavigation();
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                clearGuidSelection();
+            }
         });
     </script>
 </body>
