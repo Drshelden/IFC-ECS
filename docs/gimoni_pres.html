@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merging IFC and USD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* 1. CLEAN EXPORT-READY SETUP */
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #e8eaed;
+            font-family: 'Urbanist', sans-serif;
+            color: #202124;
+        }
+
+        /* 2. NATIVE 16:9 SLIDE SHAPE */
+        .slide {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 1152px; /* Standard 16:9 width constraint */
+            aspect-ratio: 16 / 9;
+            margin: 0 auto 50px auto;
+            padding: 60px 80px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            page-break-after: always;
+            display: block; /* Standard block display ensures correct text-box parsing */
+            text-align: left;
+        }
+
+        /* 3. TYPOGRAPHY (Left Justified, Simple) */
+        h1 {
+            font-size: 64px;
+            line-height: 1.2;
+            color: #111111;
+            margin-top: 10%;
+            margin-bottom: 20px;
+        }
+
+        h1 span {
+            color: #2e7d32;
+        }
+
+        h2 {
+            font-size: 48px;
+            color: #111111;
+            margin-top: 0;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #2e7d32;
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+
+        p, li {
+            font-size: 24px;
+            line-height: 1.6;
+            color: #333333;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        ul {
+            padding-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 32px;
+            color: #555555;
+        }
+
+        /* 4. CODE BLOCKS */
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 16px;
+            line-height: 1.4;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            color: #24292e;
+            margin-bottom: 30px;
+        }
+
+        /* Export Print Rules */
+        @media print {
+            body { background-color: #ffffff; padding: 0; }
+            .slide { box-shadow: none; margin: 0; max-width: none; width: 100vw; height: 100vh; aspect-ratio: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Slide 1 -->
+    <section class="slide">
+        <h1>Merging <span>IFC</span> and <span>USD</span></h1>
+        <p class="subtitle">A strategic approach to integrating the semantic business logic of Industry Foundation Classes within the high-performance architecture of Universal Scene Description.</p>
+    </section>
+
+    <!-- Slide 2 -->
+    <section class="slide">
+        <h2>The Strategy</h2>
+        <ul>
+            <li>The Industry Foundation Classes (IFC) schema excels at defining the strict semantic logic, relationships, and property data of buildings.</li>
+            <li>Universal Scene Description (USD) provides an unparalleled, high-performance framework for composing massive 3D scenes.</li>
+            <li>By migrating IFC definitions into USD native schemas, we map IFC's abstract structures to USD's core concepts.</li>
+            <li>This enables rich building data to natively power advanced rendering, physics simulation, and real-time digital twins.</li>
+        </ul>
+    </section>
+
+    <!-- Slide 3 -->
+    <section class="slide">
+        <h2>Core USD Concepts</h2>
+        <ul>
+            <li><strong>class:</strong> Establishes a reusable template. In IFC, this directly maps to abstract base definitions or <code>IfcTypeObject</code> elements, defining pure structural topology without a physical presence.</li>
+            <li><strong>def:</strong> Defines a concrete, physical instance. In IFC, this correlates to an <code>IfcProduct</code> occurrence instantiated within a specific level of the spatial hierarchy.</li>
+            <li><strong>over:</strong> An overriding declaration that retroactively augments an object. This is how we inject IFC semantics, specific property sets, and massive geometric arrays.</li>
+        </ul>
+    </section>
+
+    <!-- Slide 4 -->
+    <section class="slide">
+        <h2>Understanding "class"</h2>
+        <p>In USD, a <code>class</code> establishes a reusable blueprint without actually placing an object into the scene hierarchy.</p>
+        <p>In our IFC merging strategy, classes are leveraged to define the foundational definition of a building element—such as a generic Wall. This includes mapping out its necessary sub-components, such as its <code>Body</code> (Mesh), <code>Axis</code>, and <code>Directrix</code> (BasisCurves).</p>
+        <p>Think of it as the ultimate "Type" definition. It guarantees that every subsequent Wall instance will inherit this exact topological structure.</p>
+    </section>
+
+    <!-- Slide 5 -->
+    <section class="slide">
+        <h2>Understanding "def"</h2>
+        <p>A <code>def</code> block creates a tangible, concrete instance in the USD scene. It moves a concept from a blueprint into physical space.</p>
+        <p>For our IFC model, this is the exact moment an abstract wall "class" becomes a physical occurrence. It is instantiated within a strict spatial container, mimicking the IFC Spatial Structure (e.g., inside a specific <code>IfcSpace</code> or <code>IfcBuildingStorey</code>).</p>
+        <p>The instance simply points to its parent class, inheriting all underlying traits and topologies instantly.</p>
+    </section>
+
+    <!-- Slide 6 -->
+    <section class="slide">
+        <h2>Understanding "over"</h2>
+        <p>The <code>over</code> concept is the linchpin for merging IFC's heavy business logic with USD's lightweight scene structure.</p>
+        <p>Instead of cluttering the initial definition, USD allows us to non-destructively "override" or augment an existing <code>class</code> or <code>def</code> retroactively.</p>
+        <p>We use <code>over</code> declarations strictly to inject the semantic payload: designating the <code>ifc5:class</code>, assigning custom Property Sets (like external boundaries), linking materials, and streaming raw geometric vertex data.</p>
+    </section>
+
+    <!-- Slide 7 -->
+    <section class="slide">
+        <h2>IFC Naming Conventions & Suffixes</h2>
+        <ul>
+            <li>In this schema, you will see base names like <code>N93791d5d5beb437bb8ec2f1f0ba4bf3b</code> and concatenated names like <code>N93791d5d5beb437bb8ec2f1f0ba4bf3b_Body</code>.</li>
+            <li>The <strong>base name</strong> represents the top-level, abstract architectural container. It is the core IFC element, such as the overall Wall object.</li>
+            <li>The <strong>concatenated name</strong> represents a specific geometric sub-component belonging to that parent element.</li>
+            <li>This structure is necessary because a single IFC object might contain multiple distinct representations simultaneously, such as a physical 3D mesh (<code>_Body</code>), a centerline (<code>_Axis</code>), or a 2D footprint (<code>_FootPrint</code>).</li>
+            <li>Appending text ensures unique identification for these sub-components within the USD hierarchy without naming collisions.</li>
+        </ul>
+    </section>
+
+    <!-- Slide 8 -->
+    <section class="slide">
+        <h2>IFC to USD Pipeline</h2>
+        <ul>
+            <li><strong>Step 1: class</strong> - Establish the base IFC element templates and required sub-topologies.</li>
+            <li><strong>Step 2: def</strong> - Instantiate physical elements precisely within the USD spatial hierarchy.</li>
+            <li><strong>Step 3: over (Logic)</strong> - Retroactively inject business logic, IFC classes, and custom properties.</li>
+            <li><strong>Step 4: over (Geom)</strong> - Stream massive geometric coordinate arrays and complex materials.</li>
+        </ul>
+    </section>
+
+    <!-- Slide 9 -->
+    <section class="slide">
+        <h2>Code Summary: Blueprint & Instantiation</h2>
+        <p><strong>1. Blueprint (class)</strong></p>
+<pre><code>{
+ "def": "class",
+ "type": "UsdGeom:Xform",
+ "name": "N93791d..."
+}</code></pre>
+        <p><strong>2. Instantiation (def & inherits)</strong></p>
+<pre><code>{
+ "def": "def",
+ "name": "Wall",
+ "inherits": ["&lt;/N93791...&gt;"]
+}</code></pre>
+    </section>
+
+    <!-- Slide 10 -->
+    <section class="slide">
+        <h2>Code Summary: Augmentation & Naming</h2>
+        <p><strong>3. Augmentation (over)</strong></p>
+<pre><code>{
+ "def": "over",
+ "attributes": {
+  "ifc5:class": {"code": "IfcWall"}
+ }
+}</code></pre>
+        <p><strong>4. Name Expansion</strong></p>
+<pre><code>{
+ "def": "def",
+ "name": "Body",
+ "inherits": ["&lt;/N9379..._Body&gt;"]
+}</code></pre>
+    </section>
+
+    <!-- Slide 11 -->
+    <section class="slide">
+        <h2>Example Data Notice</h2>
+        <ul>
+            <li>2024-11-12 update of the examples.</li>
+            <li>(C) buildingSMART International.</li>
+            <li>Published under CC BY-ND 4.0.</li>
+        </ul>
+    </section>
+
+</body>
+</html>
+```

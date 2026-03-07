@@ -22,12 +22,15 @@ except ImportError as e:
 
 from utils import toLowerCamelcase, generateDeterministicGuid, expandGuid
 
+# include empty properties in output (as empty strings) 
 INCLUDE_EMPTY_PROPERTIES = False
 
-
-ALLOWED_TYPES = {'IfcObjectDefinition', 'IfcPropertySet', 'IfcRelationship'}
-# ALLOWED_TYPES = {'IfcRelationship'}
-
+#only these top level nodes are exported, all are imported
+ALLOWED_TYPES = {
+    'IfcObjectDefinition', 
+    'IfcPropertySet', 
+    'IfcRelationship'
+    }
 
 # Define attributes to exclude
 EXCLUDE_ATTRIBUTES = {
@@ -45,7 +48,6 @@ EXCLUDE_ATTRIBUTES = {
 
 # Define attribute name substitutions
 ATTRIBUTE_SUBSTITUTIONS = {
-    # 'GlobalId': 'entityGuid',
     'Name': 'componentName',
     'Description': 'componentDescription',
     'HasPropertySets': 'propertySets',

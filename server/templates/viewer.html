@@ -211,9 +211,9 @@
         }
 
         .tree-item.selected > .tree-item-content {
-            background: #0098ff;
+            background: #ff0000;
             color: white;
-            border-left-color: #0078cc;
+            border-left-color: #cc0000;
         }
 
         .tree-item-content code[data-guid-value] {
@@ -693,6 +693,11 @@
         const selectedGuids = new Set();
         let gridHelper, axesHelper;
         let panTarget; // Track the pan/orbit center point
+        let raycaster, mouse;
+        const selectedMeshes = new Set(); // Store multiple selected meshes
+        const meshOriginalColors = new Map(); // Store original colors for unhighlighting
+        let mouseDownPos = { x: 0, y: 0 };
+        let wasMouseDragged = false;
 
         // IFC Class Colors and Opacity (from color table)
         const ifcClassColors = {
@@ -816,6 +821,9 @@
             });
 
             document.getElementById('zoomAll').addEventListener('click', () => zoomToSelected(true));
+            
+            // Setup 3D mesh selection
+            setup3DSelection();
         }
 
         function setupMouseControls() {
@@ -826,6 +834,8 @@
 
             canvas.addEventListener('mousedown', (e) => {
                 isDragging = true;
+                wasMouseDragged = false;
+                mouseDownPos = { x: e.clientX, y: e.clientY };
                 previousMousePosition = { x: e.clientX, y: e.clientY };
             });
 
@@ -834,6 +844,11 @@
 
                 const deltaX = e.clientX - previousMousePosition.x;
                 const deltaY = e.clientY - previousMousePosition.y;
+                
+                // Mark as dragged if mouse moved more than 3 pixels
+                if (Math.abs(e.clientX - mouseDownPos.x) > 3 || Math.abs(e.clientY - mouseDownPos.y) > 3) {
+                    wasMouseDragged = true;
+                }
 
                 if (e.shiftKey) {
                     // Pan mode: move camera and target together
@@ -895,6 +910,86 @@
                 camera.position.copy(panTarget).add(offsetPos);
                 camera.up.set(0, 0, 1); // Preserve Z-up orientation when zooming
             });
+        }
+
+        function setup3DSelection() {
+            const canvas = document.getElementById('canvas3d');
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            canvas.addEventListener('click', (event) => {
+                // Don't process clicks if user was dragging
+                if (wasMouseDragged) {
+                    return;
+                }
+
+                // Calculate mouse position in normalized device coordinates (-1 to +1)
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                // Update the raycaster with the camera and mouse position
+                raycaster.setFromCamera(mouse, camera);
+
+                // Calculate objects intersecting the ray
+                const meshArray = Array.from(objects3d.values());
+                const intersects = raycaster.intersectObjects(meshArray, false);
+
+                if (intersects.length > 0) {
+                    const intersectedMesh = intersects[0].object;
+                    const componentGuid = intersectedMesh.userData.componentGuid;
+                    
+                    if (componentGuid) {
+                        console.log(`🖱️ Clicked mesh with componentGuid: ${componentGuid}`);
+                        
+                        // Find the entity that owns this component
+                        const entityGuids = getEntityGuidsForComponentGuid(componentGuid);
+                        const entityGuid = entityGuids[0];
+                        
+                        if (entityGuid) {
+                            console.log(`  Entity for this component: ${entityGuid}`);
+                            
+                            // Select the entity in the tree without touching meshes
+                            selectTreeItemByGuid(entityGuid, { clearMeshes: false, highlightMeshes: false });
+
+                            // Clear previous selection and highlight all meshes for this entity in red
+                            clearMeshHighlights();
+                            highlightMeshesForEntityGuid(entityGuid);
+                        } else {
+                            console.warn(`  Could not find entity for component: ${componentGuid}`);
+                        }
+                    }
+                } else {
+                    // Clicked on empty space - clear selection
+                    console.log(`🖱️ Clicked empty space - clearing selection`);
+                    clearGuidSelection();
+                }
+            });
+        }
+
+        function highlightSelectedMesh(mesh) {
+            if (!mesh || !mesh.material) return;
+            
+            selectedMeshes.add(mesh);
+            // Change mesh color to red
+            mesh.material.color.setHex(0xff0000);
+            mesh.material.needsUpdate = true;
+            console.log(`✓ Highlighted mesh in red`);
+        }
+
+        function clearMeshHighlights() {
+            selectedMeshes.forEach(mesh => {
+                const meshId = mesh.userData.meshId;
+                const originalColor = meshOriginalColors.get(meshId);
+                
+                if (originalColor !== undefined) {
+                    mesh.material.color.setHex(originalColor);
+                    mesh.material.needsUpdate = true;
+                    console.log(`✓ Restored original color for mesh ${meshId}`);
+                }
+            });
+            
+            selectedMeshes.clear();
         }
 
         function showNotification(message, type = 'info') {
@@ -1278,6 +1373,9 @@
                         });
                         
                         const mesh = new THREE.Mesh(geometry, material);
+                        mesh.userData.componentGuid = componentGuid;
+                        mesh.userData.meshId = meshId;
+                        meshOriginalColors.set(meshId, color);
                         scene.add(mesh);
                         objects3d.set(meshId, mesh);
                         meshesCreated++;
@@ -1363,6 +1461,9 @@
                     });
 
                     const mesh = new THREE.Mesh(geometry, material);
+                    mesh.userData.componentGuid = componentGuid;
+                    mesh.userData.meshId = meshId;
+                    meshOriginalColors.set(meshId, color);
                     scene.add(mesh);
                     objects3d.set(meshId, mesh);
                     meshesCreated++;
@@ -1605,6 +1706,11 @@
                     componentItem.addEventListener('click', (e) => {
                         if (e.target.closest('.tree-toggle, .tree-checkbox')) return;
                         e.stopPropagation();
+
+                        // Select and highlight corresponding meshes
+                        selectTreeItemByGuid(componentGuid, { clearMeshes: true, highlightMeshes: true });
+
+                        // Also toggle expand
                         componentItem.classList.toggle('expanded');
                     });
 
@@ -1636,6 +1742,11 @@
                 entityItem.addEventListener('click', (e) => {
                     if (e.target.closest('.tree-toggle, .tree-checkbox')) return;
                     e.stopPropagation();
+
+                    // Select and highlight corresponding meshes
+                    selectTreeItemByGuid(entityGuid, { clearMeshes: true, highlightMeshes: true });
+
+                    // Also toggle expand
                     entityItem.classList.toggle('expanded');
                 });
 
@@ -1810,11 +1921,7 @@
         }
 
         function clearTreeSelection(container) {
-            selectedGuids.clear();
-            const allCheckboxes = container.querySelectorAll('.tree-checkbox');
-            allCheckboxes.forEach(cb => {
-                cb.checked = false;
-            });
+            // Only clear visual selection, don't touch checkboxes or visibility
             const selectedItems = container.querySelectorAll('.tree-item.selected');
             selectedItems.forEach(item => item.classList.remove('selected'));
         }
@@ -1827,9 +1934,73 @@
             }
         }
 
-        function selectTreeItemByGuid(guid) {
+        function getComponentGuidsForEntity(entityGuid) {
+            if (!currentData || !currentData.entities || !entityGuid) return [];
+            const entitiesByModel = currentData.entities;
+            const modelNames = Object.keys(entitiesByModel);
+            for (const modelName of modelNames) {
+                const modelEntities = entitiesByModel[modelName];
+                if (modelEntities && modelEntities[entityGuid]) {
+                    return modelEntities[entityGuid];
+                }
+            }
+            return [];
+        }
+
+        function getEntityGuidsForComponentGuid(componentGuid) {
+            if (!currentData || !currentData.entities || !componentGuid) return [];
+            const entitiesByModel = currentData.entities;
+            const modelNames = Object.keys(entitiesByModel);
+            const matchingEntities = [];
+            
+            for (const modelName of modelNames) {
+                const modelEntities = entitiesByModel[modelName];
+                if (modelEntities) {
+                    for (const entityGuid of Object.keys(modelEntities)) {
+                        const componentGuids = modelEntities[entityGuid];
+                        if (Array.isArray(componentGuids) && componentGuids.includes(componentGuid)) {
+                            matchingEntities.push(entityGuid);
+                        }
+                    }
+                }
+            }
+            
+            return matchingEntities;
+        }
+
+        function highlightMeshesForComponentGuid(componentGuid) {
+            if (!componentGuid) return;
+            let hasMesh = false;
+
+            objects3d.forEach((mesh, meshId) => {
+                if (meshId.startsWith(componentGuid + '-')) {
+                    hasMesh = true;
+                    highlightSelectedMesh(mesh);
+                }
+            });
+
+            if (!hasMesh && currentData?.components?.[componentGuid]) {
+                renderComponentShapes(componentGuid, currentData.components[componentGuid]);
+                objects3d.forEach((mesh, meshId) => {
+                    if (meshId.startsWith(componentGuid + '-')) {
+                        highlightSelectedMesh(mesh);
+                    }
+                });
+            }
+        }
+
+        function highlightMeshesForEntityGuid(entityGuid) {
+            const componentGuids = getComponentGuidsForEntity(entityGuid);
+            componentGuids.forEach(componentGuid => {
+                highlightMeshesForComponentGuid(componentGuid);
+            });
+        }
+
+        function selectTreeItemByGuid(guid, options = {}) {
             const container = document.getElementById('treeContainer');
             if (!container || !guid) return false;
+
+            const { clearMeshes = true, highlightMeshes = true } = options;
 
             const safeGuid = escapeForSelector(guid);
             let treeItem = null;
@@ -1845,33 +2016,20 @@
             if (!treeItem) return false;
 
             clearTreeSelection(container);
+            if (clearMeshes) {
+                clearMeshHighlights();
+            }
             expandToTreeItem(treeItem);
             treeItem.classList.add('selected');
 
-            const itemType = treeItem.dataset.type;
-            if (itemType === 'entity') {
-                const entityCheckbox = treeItem.querySelector('.tree-checkbox');
-                if (entityCheckbox) entityCheckbox.checked = true;
-                const componentItems = treeItem.querySelectorAll('.tree-children .tree-item[data-type="component"]');
-                componentItems.forEach(componentItem => {
-                    const componentGuid = componentItem.dataset.guid;
-                    const componentCheckbox = componentItem.querySelector('.tree-checkbox');
-                    if (componentCheckbox) componentCheckbox.checked = true;
-                    if (componentGuid) {
-                        selectedGuids.add(componentGuid);
-                        renderComponentShapes(componentGuid, currentData?.components?.[componentGuid]);
-                    }
-                });
-            } else if (itemType === 'component') {
-                const componentCheckbox = treeItem.querySelector('.tree-checkbox');
-                if (componentCheckbox) componentCheckbox.checked = true;
-                selectedGuids.add(guid);
-                renderComponentShapes(guid, currentData?.components?.[guid]);
+            if (highlightMeshes) {
+                const itemType = treeItem.dataset.type;
+                if (itemType === 'entity') {
+                    highlightMeshesForEntityGuid(guid);
+                } else if (itemType === 'component') {
+                    highlightMeshesForComponentGuid(guid);
+                }
             }
-
-            updateComponentVisibility();
-            updateTableForSelection();
-
             treeItem.scrollIntoView({ block: 'center' });
             return true;
         }
@@ -1899,9 +2057,9 @@
         function clearGuidSelection() {
             const container = document.getElementById('treeContainer');
             if (!container) return;
+            // Only clear visual selection, don't touch checkboxes or visibility
             clearTreeSelection(container);
-            updateComponentVisibility();
-            updateTableForSelection();
+            clearMeshHighlights();
         }
 
         function getIconForType(type, componentData) {

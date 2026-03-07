@@ -14,4 +14,8 @@ http://localhost:5000/api/componentGuids?models=HelloWall-01,HelloWall-02&compon
 
 http://localhost:5000/api/components?componentTypes=IfcRelAggregatesComponent
 
+http://localhost:5000/api/components?models=RE1-Architecture&entityTypes=IfcWall
+
 http://localhost:5000/api/components?models=RE1-Architecture,RE1-Mechanical,RE1-Electrical,RE1-Plumbing
+
+http://localhost:5000/api/components?models=CASE&entityTypes=IfcProduct 
