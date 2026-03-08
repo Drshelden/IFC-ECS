@@ -11,6 +11,8 @@ class MemoryTree:
     def __init__(self):
         """Initialize the memory tree"""
         self.models: Dict = {}  # models[model_name] = {by_entity, by_type, by_entityType, by_componentGuid}
+        self.by_entity: Dict[str, List[Dict]] = {}
+        self.by_componentGuid: Dict[str, List[Dict]] = {}
 
     
     def refresh_from_store(self, store_path: str):
@@ -20,6 +22,8 @@ class MemoryTree:
             store_path: Path to the file-based data store
         """
         self.models = {}
+        self.by_entity = {}
+        self.by_componentGuid = {}
         
         if not os.path.isdir(store_path):
             return
@@ -57,6 +61,13 @@ class MemoryTree:
                     
                     # Store by GUID
                     self.models[model_name]['by_componentGuid'][component_guid] = component
+
+                    if component_guid not in self.by_componentGuid:
+                        self.by_componentGuid[component_guid] = []
+                    self.by_componentGuid[component_guid].append({
+                        'model': model_name,
+                        'component': component
+                    })
                     
                     # Index by entity GUID
                     entity_guid = component.get('entityGuid')
@@ -64,6 +75,13 @@ class MemoryTree:
                         if entity_guid not in self.models[model_name]['by_entity']:
                             self.models[model_name]['by_entity'][entity_guid] = []
                         self.models[model_name]['by_entity'][entity_guid].append(component_guid)
+
+                        if entity_guid not in self.by_entity:
+                            self.by_entity[entity_guid] = []
+                        self.by_entity[entity_guid].append({
+                            'model': model_name,
+                            'componentGuid': component_guid
+                        })
 
                         # Track entity type from component's entityType field
                         entity_type = component.get('entityType')
@@ -245,10 +263,20 @@ class MemoryTree:
             for guid in guids:
                 if guid in model['by_componentGuid']:
                     component = model['by_componentGuid'][guid].copy()
+                    component['_model'] = model_name
                     components.append(component)
-                    guid_to_model[guid] = model_name
+                    if guid not in guid_to_model:
+                        guid_to_model[guid] = model_name
         
         return components, guid_to_model
+
+    def get_flat_entities(self):
+        """Return flattened entity index across all models.
+
+        Returns:
+            Dict mapping entityGuid -> List[Dict(model, componentGuid)]
+        """
+        return {entity_guid: entries.copy() for entity_guid, entries in self.by_entity.items()}
     
     def get_models(self) -> List[str]:
         """Get list of all loaded models

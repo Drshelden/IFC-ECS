@@ -610,7 +610,8 @@ class IFCProcessingServer:
                 result_by_model = {}
                 for component in components:
                     guid = component.get('componentGuid', '')
-                    model_name = guid_to_model.get(guid, 'unknown')
+                    model_name = component.get('_model') or guid_to_model.get(guid, 'unknown')
+                    component['_model'] = model_name
                     if model_name not in result_by_model:
                         result_by_model[model_name] = []
                     result_by_model[model_name].append(component)

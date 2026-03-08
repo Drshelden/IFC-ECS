@@ -1,8 +1,8 @@
 [
   {
-    "componentGuid": "8fcce169-98e4-9471-53dd-a583112814c7",
+    "componentGuid": "198e7951-d002-07cb-588b-583a9f8124bd",
     "componentType": "IfcPropertySetComponent",
-    "entityGuid": "0d68ad35-29c7-484d-907c-65a3fbc0eadb",
+    "entityGuid": "a9c8fe2e-1465-4760-b05d-d3419a1b31af",
     "hasProperties": [
       {
         "componentType": "IfcPropertySingleValueComponent",
@@ -16,9 +16,9 @@
     "name": "Pset_QuantityTakeOff"
   },
   {
-    "componentGuid": "156d4a9b-8c6b-d7dd-d6fc-b0dabd0b3d9c",
+    "componentGuid": "66bf93a0-56d9-f7bb-798c-d58c81e778cd",
     "componentType": "IfcPropertySetComponent",
-    "entityGuid": "0d68ad35-29c7-484d-907c-65a3fbc0eadb",
+    "entityGuid": "a9c8fe2e-1465-4760-b05d-d3419a1b31af",
     "hasProperties": [
       {
         "componentType": "IfcPropertySingleValueComponent",
@@ -32,9 +32,9 @@
     "name": "Pset_ReinforcementBarPitchOfWall"
   },
   {
-    "componentGuid": "b99d0d2a-c2fb-706a-fe51-61c31df9e3ca",
+    "componentGuid": "30d2c2e5-9fd0-8530-cc19-de7fea3edc47",
     "componentType": "IfcPropertySetComponent",
-    "entityGuid": "0d68ad35-29c7-484d-907c-65a3fbc0eadb",
+    "entityGuid": "a9c8fe2e-1465-4760-b05d-d3419a1b31af",
     "hasProperties": [
       {
         "componentType": "IfcPropertySingleValueComponent",
@@ -183,16 +183,16 @@
     "name": "Pset_ProductRequirements"
   },
   {
-    "componentGuid": "d744217a-39c1-b8c4-dc85-b56f79b14b96",
+    "componentGuid": "f5915099-90cb-1fad-bd08-21380d9c8572",
     "componentType": "IfcPropertySetComponent",
-    "entityGuid": "f37a7759-e6ef-46dc-b486-b145235c3775",
+    "entityGuid": "a481e428-304f-4c4c-9675-4d98135dee40",
     "hasProperties": [
       {
         "componentType": "IfcPropertySingleValueComponent",
         "name": "NumberOfStoreys",
         "nominalValue": {
           "componentType": "IfcIntegerComponent",
-          "wrappedValue": 2
+          "wrappedValue": 1
         }
       },
       {
@@ -207,18 +207,18 @@
     "name": "Pset_BuildingCommon"
   },
   {
-    "componentGuid": "09043b0e-bf3f-0fd9-b322-21c8a3d55383",
+    "componentGuid": "7ff8b4d7-cb63-f53d-495a-821c2e40ce5f",
     "componentType": "IfcWallStandardCaseComponent",
-    "entityGuid": "0d68ad35-29c7-484d-907c-65a3fbc0eadb",
+    "entityGuid": "a9c8fe2e-1465-4760-b05d-d3419a1b31af",
     "entityType": "IfcWallStandardCase",
-    "name": "Basic Wall:Generic - 8\":1240542",
+    "name": "Basic Wall:Generic - 8\":1200265",
     "objectType": "Basic Wall:Generic - 8\"",
-    "tag": "1240542"
+    "tag": "1200265"
   },
   {
     "buildingAddress": {
       "addressLines": [
-        "Enter address here\r\nAddress Line 2"
+        "Enter address hereAddress Line 2"
       ],
       "componentType": "IfcPostalAddressComponent",
       "country": "MA",
@@ -226,16 +226,16 @@
       "region": "Boston",
       "town": ""
     },
-    "componentGuid": "b0713ce8-0855-ef56-5a6f-740eab552756",
+    "componentGuid": "481ff537-b96e-fc78-7eef-cd4747907336",
     "componentType": "IfcBuildingComponent",
     "compositionType": "ELEMENT",
-    "entityGuid": "f37a7759-e6ef-46dc-b486-b145235c3775",
+    "entityGuid": "a481e428-304f-4c4c-9675-4d98135dee40",
     "entityType": "IfcBuilding",
     "longName": "Building Name",
     "name": "Building Name"
   },
   {
-    "componentGuid": "c6a692ca-baa3-44d5-3eac-d560ce400055",
+    "componentGuid": "c0b20a99-d9b7-1da8-4c7b-51589bb68cf8",
     "componentType": "IfcBuildingStoreyComponent",
     "compositionType": "ELEMENT",
     "elevation": 0.0,
@@ -246,7 +246,7 @@
     "objectType": "Level:1/4\" Head"
   },
   {
-    "componentGuid": "43d3c56f-c378-0244-ed38-6099a3b6433f",
+    "componentGuid": "05e5fa2c-5b79-a450-72d7-ff58d84b5dc5",
     "componentType": "IfcBuildingStoreyComponent",
     "compositionType": "ELEMENT",
     "elevation": 12.0,
@@ -257,10 +257,10 @@
     "objectType": "Level:1/4\" Head"
   },
   {
-    "componentGuid": "9c80c594-6885-a072-27fa-fca262fa083b",
+    "componentGuid": "f2618539-d08e-5013-463a-07dc5b63e831",
     "componentType": "IfcSiteComponent",
     "compositionType": "ELEMENT",
-    "entityGuid": "f37a7759-e6ef-46dc-b486-b145235c3776",
+    "entityGuid": "a481e428-304f-4c4c-9675-4d98135dee43",
     "entityType": "IfcSite",
     "name": "Default",
     "refElevation": 0.0,
@@ -278,16 +278,16 @@
     ]
   },
   {
-    "componentGuid": "f701d914-76db-0620-e2fa-947749abbbd2",
+    "componentGuid": "e9a62166-6e1e-f8fa-85dc-de6fb08b32d5",
     "componentType": "IfcProjectComponent",
-    "entityGuid": "f37a7759-e6ef-46dc-b486-b145235c3774",
+    "entityGuid": "a481e428-304f-4c4c-9675-4d98135dee41",
     "entityType": "IfcProject",
     "longName": "Project Name",
     "name": "Project Number",
     "phase": "Project Status"
   },
   {
-    "componentGuid": "29dd9a19-c455-f8b1-d590-9f13f7205645",
+    "componentGuid": "960ba328-a36b-bfae-ea9e-238f89a31ae8",
     "componentType": "IfcWallTypeComponent",
     "entityGuid": "7b8f559f-8b31-42c2-ba44-e16f7a04146e",
     "entityType": "IfcWallType",
@@ -299,11 +299,33 @@
     "tag": "441451"
   },
   {
-    "componentGuid": "5ee46b9f-a508-fc7b-3fde-e8df6c667753",
+    "componentGuid": "1d9f7468-49fe-05c0-0f88-0ca8cb68f312",
+    "componentType": "IfcRelAssociatesClassificationComponent",
+    "description": "Exterior Walls:B2010",
+    "entityGuid": "",
+    "name": "Exterior Walls",
+    "relatedObjects": [
+      "a9c8fe2e-1465-4760-b05d-d3419a1b31af"
+    ],
+    "relatingClassification": {
+      "componentType": "IfcClassificationReferenceComponent",
+      "itemReference": "B2010",
+      "location": "https://www.csiresources.org/standards/uniformat",
+      "name": "Exterior Walls",
+      "referencedSource": {
+        "componentType": "IfcClassificationComponent",
+        "edition": "1998",
+        "name": "Uniformat",
+        "source": "CSI (Construction Specifications Institute)"
+      }
+    }
+  },
+  {
+    "componentGuid": "2204f8df-c076-a835-ea46-ee11002ac61f",
     "componentType": "IfcRelAssociatesMaterialComponent",
     "entityGuid": "",
     "relatedObjects": [
-      "0d68ad35-29c7-484d-907c-65a3fbc0eadb"
+      "a9c8fe2e-1465-4760-b05d-d3419a1b31af"
     ],
     "relatingMaterial": {
       "componentType": "IfcMaterialLayerSetUsageComponent",
@@ -327,7 +349,7 @@
     }
   },
   {
-    "componentGuid": "dde4448f-9644-adcd-61c2-5a07fef1b1e4",
+    "componentGuid": "5c886702-0c35-6d83-b6e7-cde42794067f",
     "componentType": "IfcRelAssociatesMaterialComponent",
     "entityGuid": "",
     "relatedObjects": [
@@ -353,64 +375,64 @@
     "componentType": "IfcRelContainedInSpatialStructureComponent",
     "entityGuid": "933c4a06-93b8-11d3-80f8-00c04f8efc2c",
     "relatedElements": [
-      "0d68ad35-29c7-484d-907c-65a3fbc0eadb"
+      "a9c8fe2e-1465-4760-b05d-d3419a1b31af"
     ],
     "relatingStructure": "933c4a06-93b8-11d3-80f8-00c04f8efc2c"
   },
   {
-    "componentGuid": "27943ccb-4589-ca14-689b-d559b27d81aa",
+    "componentGuid": "890cd4cd-c404-c42d-c657-8540766bf9a8",
     "componentType": "IfcRelAggregatesComponent",
-    "entityGuid": "f37a7759-e6ef-46dc-b486-b145235c3774",
+    "entityGuid": "a481e428-304f-4c4c-9675-4d98135dee41",
     "relatedObjects": [
-      "f37a7759-e6ef-46dc-b486-b145235c3776"
+      "a481e428-304f-4c4c-9675-4d98135dee43"
     ],
-    "relatingObject": "f37a7759-e6ef-46dc-b486-b145235c3774"
+    "relatingObject": "a481e428-304f-4c4c-9675-4d98135dee41"
   },
   {
-    "componentGuid": "2562d61d-3dd7-a52f-ff71-c989cce55c7e",
+    "componentGuid": "f123af45-08f4-d4a5-054e-b086edaa52b9",
     "componentType": "IfcRelAggregatesComponent",
-    "entityGuid": "f37a7759-e6ef-46dc-b486-b145235c3776",
+    "entityGuid": "a481e428-304f-4c4c-9675-4d98135dee43",
     "relatedObjects": [
-      "f37a7759-e6ef-46dc-b486-b145235c3775"
+      "a481e428-304f-4c4c-9675-4d98135dee40"
     ],
-    "relatingObject": "f37a7759-e6ef-46dc-b486-b145235c3776"
+    "relatingObject": "a481e428-304f-4c4c-9675-4d98135dee43"
   },
   {
     "componentGuid": "7cacd49c-ac17-4591-ad0a-cbcabb412ad9",
     "componentType": "IfcRelAggregatesComponent",
-    "entityGuid": "f37a7759-e6ef-46dc-b486-b145235c3775",
+    "entityGuid": "a481e428-304f-4c4c-9675-4d98135dee40",
     "relatedObjects": [
       "933c4a06-93b8-11d3-80f8-00c04f8efc2c",
       "6341822b-d4f3-11d3-a039-0000863f33f9"
     ],
-    "relatingObject": "f37a7759-e6ef-46dc-b486-b145235c3775"
+    "relatingObject": "a481e428-304f-4c4c-9675-4d98135dee40"
   },
   {
-    "componentGuid": "38ad01c4-e491-2658-6ea0-a5b280c7191e",
+    "componentGuid": "0d11f5a8-3705-f3ee-d9a7-b393522cd037",
     "componentType": "IfcRelDefinesByPropertiesComponent",
-    "entityGuid": "8fcce169-98e4-9471-53dd-a583112814c7",
+    "entityGuid": "198e7951-d002-07cb-588b-583a9f8124bd",
     "relatedObjects": [
-      "0d68ad35-29c7-484d-907c-65a3fbc0eadb"
+      "a9c8fe2e-1465-4760-b05d-d3419a1b31af"
     ],
-    "relatingPropertyDefinition": "8fcce169-98e4-9471-53dd-a583112814c7"
+    "relatingPropertyDefinition": "198e7951-d002-07cb-588b-583a9f8124bd"
   },
   {
-    "componentGuid": "a6275c46-5920-bfea-7400-7fff3d973c94",
+    "componentGuid": "928e5efc-dfda-7f11-1dfe-83673d648eb6",
     "componentType": "IfcRelDefinesByPropertiesComponent",
-    "entityGuid": "156d4a9b-8c6b-d7dd-d6fc-b0dabd0b3d9c",
+    "entityGuid": "66bf93a0-56d9-f7bb-798c-d58c81e778cd",
     "relatedObjects": [
-      "0d68ad35-29c7-484d-907c-65a3fbc0eadb"
+      "a9c8fe2e-1465-4760-b05d-d3419a1b31af"
     ],
-    "relatingPropertyDefinition": "156d4a9b-8c6b-d7dd-d6fc-b0dabd0b3d9c"
+    "relatingPropertyDefinition": "66bf93a0-56d9-f7bb-798c-d58c81e778cd"
   },
   {
-    "componentGuid": "fe0a67a0-0238-1540-2369-3df2d0b39639",
+    "componentGuid": "8c0297d1-fd46-b1aa-81b5-35697107225a",
     "componentType": "IfcRelDefinesByPropertiesComponent",
-    "entityGuid": "b99d0d2a-c2fb-706a-fe51-61c31df9e3ca",
+    "entityGuid": "30d2c2e5-9fd0-8530-cc19-de7fea3edc47",
     "relatedObjects": [
-      "0d68ad35-29c7-484d-907c-65a3fbc0eadb"
+      "a9c8fe2e-1465-4760-b05d-d3419a1b31af"
     ],
-    "relatingPropertyDefinition": "b99d0d2a-c2fb-706a-fe51-61c31df9e3ca"
+    "relatingPropertyDefinition": "30d2c2e5-9fd0-8530-cc19-de7fea3edc47"
   },
   {
     "componentGuid": "d73e8d87-30b7-c805-101b-45fce0e058cf",
@@ -467,27 +489,27 @@
     "relatingPropertyDefinition": "e50a448d-e49e-6463-9960-780adf83d910"
   },
   {
-    "componentGuid": "4d85f1ec-595b-0ac2-499f-afc4d1346899",
+    "componentGuid": "26cf7842-42b6-db76-0292-fa2967845c31",
     "componentType": "IfcRelDefinesByPropertiesComponent",
-    "entityGuid": "d744217a-39c1-b8c4-dc85-b56f79b14b96",
+    "entityGuid": "f5915099-90cb-1fad-bd08-21380d9c8572",
     "relatedObjects": [
-      "f37a7759-e6ef-46dc-b486-b145235c3775"
+      "a481e428-304f-4c4c-9675-4d98135dee40"
     ],
-    "relatingPropertyDefinition": "d744217a-39c1-b8c4-dc85-b56f79b14b96"
+    "relatingPropertyDefinition": "f5915099-90cb-1fad-bd08-21380d9c8572"
   },
   {
     "componentGuid": "16734fac-b783-05d0-465e-53911ab98d8a",
     "componentType": "IfcRelDefinesByTypeComponent",
     "entityGuid": "7b8f559f-8b31-42c2-ba44-e16f7a04146e",
     "relatedObjects": [
-      "0d68ad35-29c7-484d-907c-65a3fbc0eadb"
+      "a9c8fe2e-1465-4760-b05d-d3419a1b31af"
     ],
     "relatingType": "7b8f559f-8b31-42c2-ba44-e16f7a04146e"
   },
   {
-    "componentGuid": "ebbae144-66ac-c938-248e-27409a68e578",
+    "componentGuid": "12afbe44-6ed8-d064-67f4-7bca13013ef0",
     "componentType": "IfcShapeRepresentationComponent",
-    "entityGuid": "0d68ad35-29c7-484d-907c-65a3fbc0eadb",
+    "entityGuid": "a9c8fe2e-1465-4760-b05d-d3419a1b31af",
     "representationIdentifier": "Body",
     "representationFormat": "OBJ",
     "items": [

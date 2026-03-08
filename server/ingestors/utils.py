@@ -35,7 +35,8 @@ def generateDeterministicGuid(modelName, componentType, entityGuid):
     str: A GUID formatted as 01695e4-f7c6-46b0-8f70-8a0172df5a1
     """
     # Create a hash from the combination of modelName, componentType and entityGuid
-    hash_input = f"{modelName}:{componentType}:{entityGuid}".encode('utf-8')
+    #hash_input = f"{modelName}:{componentType}:{entityGuid}".encode('utf-8')
+    hash_input = f"{componentType}:{entityGuid}".encode('utf-8')
     hash_obj = hashlib.sha256(hash_input)
     hash_hex = hash_obj.hexdigest()
     
