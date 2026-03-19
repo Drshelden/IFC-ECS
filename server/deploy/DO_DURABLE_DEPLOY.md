@@ -2,18 +2,6 @@
 
 This runbook deploys `server/server.py` with durable file storage.
 
-## Quick start (automated)
-
-On a fresh Ubuntu Droplet, run:
-
-    sudo apt update
-    sudo apt install -y git
-    git clone https://github.com/YOUR_ORG/IFC-ECS.git
-    cd IFC-ECS/server/deploy
-    sudo bash bootstrap_droplet.sh --repo https://github.com/YOUR_ORG/IFC-ECS.git --domain YOUR_DOMAIN_OR_IP --data-root /opt/ifc-ecs-data
-
-If using a mounted DO Block Storage volume, replace `--data-root /opt/ifc-ecs-data` with your mount path, for example `--data-root /mnt/ifcdata`.
-
 ## 1) Create Droplet
 
 - Ubuntu 22.04 LTS
@@ -24,15 +12,14 @@ If using a mounted DO Block Storage volume, replace `--data-root /opt/ifc-ecs-da
 ## 2) SSH and install prerequisites
 
     sudo apt update
-    sudo apt install -y docker.io docker-compose-plugin nginx git ufw
+    sudo apt install -y docker.io docker-compose git ufw nginx
     sudo systemctl enable --now docker
 
 ## 3) Clone the repo
 
-    sudo mkdir -p /opt/ifc-ecs
-    sudo chown $USER:$USER /opt/ifc-ecs
-    cd /opt/ifc-ecs
-    git clone https://github.com/YOUR_ORG/IFC-ECS.git .
+    cd /opt
+    git clone https://github.com/YOUR_ORG/IFC-ECS.git
+    cd IFC-ECS/server/deploy
 
 ## 4) Prepare durable storage directories
 
@@ -54,13 +41,13 @@ with your mounted volume paths.
 
 ## 5) Build and start app
 
-    cd /opt/ifc-ecs/server/deploy
-    docker compose up -d --build
-    docker compose ps
+    cd /opt/IFC-ECS/server/deploy
+    docker-compose up -d --build
+    docker-compose ps
 
 ## 6) Configure Nginx reverse proxy
 
-    sudo cp /opt/ifc-ecs/server/deploy/nginx/ifc-ecs.conf /etc/nginx/sites-available/ifc-ecs
+    sudo cp /opt/IFC-ECS/server/deploy/nginx/ifc-ecs.conf /etc/nginx/sites-available/ifc-ecs
 
 Edit server_name in /etc/nginx/sites-available/ifc-ecs to your domain or Droplet IP.
 
@@ -76,7 +63,7 @@ Edit server_name in /etc/nginx/sites-available/ifc-ecs to your domain or Droplet
 
 ## 8) Enable auto-start at boot (systemd)
 
-    sudo cp /opt/ifc-ecs/server/deploy/systemd/ifc-ecs-docker.service /etc/systemd/system/ifc-ecs-docker.service
+    sudo cp /opt/IFC-ECS/server/deploy/systemd/ifc-ecs-docker.service /etc/systemd/system/ifc-ecs-docker.service
     sudo systemctl daemon-reload
     sudo systemctl enable ifc-ecs-docker.service
     sudo systemctl start ifc-ecs-docker.service
@@ -84,7 +71,7 @@ Edit server_name in /etc/nginx/sites-available/ifc-ecs to your domain or Droplet
 ## 9) Verify
 
     curl http://127.0.0.1:5000/api/status
-    docker compose logs -f ifc-ecs
+    docker-compose logs -f ifc-ecs
 
 Public URLs:
 - http://YOUR_DOMAIN_OR_IP/
