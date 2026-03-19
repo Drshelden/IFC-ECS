@@ -1,9 +1,9 @@
-# IFCXPrototype
+# IFC-ECS Prototype
 An ECS flavor of IFCX using simple IFC 4.X inspired components
 
 ## Live Demo
 
-The full repo is https://github.com/Drshelden/IFCXPrototype.
+The full repo is https://github.com/Drshelden/IFC-ECS.
 
 A live version of the server is located on Heroku:
 https://ifc-ecs-prototype-daa447b4d672.herokuapp.com/

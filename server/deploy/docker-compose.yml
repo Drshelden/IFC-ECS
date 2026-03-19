@@ -1,0 +1,23 @@
+services:
+  ifc-ecs:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: ifc-ecs
+    restart: unless-stopped
+    environment:
+      BACKEND: fileBased
+      PORT: "5000"
+      PYTHONUNBUFFERED: "1"
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      # Durable storage on Droplet filesystem (or mounted DO Block Storage)
+      - /opt/ifc-ecs-data/uploads:/app/uploads
+      - /opt/ifc-ecs-data/data:/app/dataStores/fileBased/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/api/status')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
