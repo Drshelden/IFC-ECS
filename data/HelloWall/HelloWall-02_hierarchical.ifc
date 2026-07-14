@@ -1,0 +1,94 @@
+{
+  "name": "083d30a7-fa3f-4235-8097-e905fc6308a9",
+  "children": [
+    {
+      "name": "/083d30a7-fa3f-4235-8097-e905fc6308a9/Project_Number",
+      "attributes": {
+        "entityGuid": "a481e428-304f-4c4c-9675-4d98135dee41",
+        "entityType": "IfcProject",
+        "componentGuid": "e9a62166-6e1e-f8fa-85dc-de6fb08b32d5",
+        "globalId": "2aWUGeC4zCJ9PrJPWJNUv1",
+        "longName": "Project Name",
+        "name": "Project Number",
+        "phase": "Project Status",
+        "componentType": "IfcProjectComponent"
+      },
+      "children": [
+        {
+          "name": "/083d30a7-fa3f-4235-8097-e905fc6308a9/Project_Number/Default",
+          "attributes": {
+            "entityGuid": "a481e428-304f-4c4c-9675-4d98135dee43",
+            "entityType": "IfcSite",
+            "componentGuid": "f2618539-d08e-5013-463a-07dc5b63e831",
+            "compositionType": "ELEMENT",
+            "globalId": "2aWUGeC4zCJ9PrJPWJNUv3",
+            "name": "Default",
+            "refElevation": 0.0,
+            "refLatitude": [
+              42,
+              21,
+              31,
+              401672
+            ],
+            "refLongitude": [
+              -71,
+              -3,
+              -24,
+              -345703
+            ],
+            "componentType": "IfcSiteComponent"
+          },
+          "children": [
+            {
+              "name": "/083d30a7-fa3f-4235-8097-e905fc6308a9/Project_Number/Default/Building_Name",
+              "attributes": {
+                "entityGuid": "a481e428-304f-4c4c-9675-4d98135dee40",
+                "entityType": "IfcBuilding",
+                "componentGuid": "481ff537-b96e-fc78-7eef-cd4747907336",
+                "compositionType": "ELEMENT",
+                "globalId": "2aWUGeC4zCJ9PrJPWJNUv0",
+                "longName": "Building Name",
+                "name": "Building Name",
+                "componentType": "IfcBuildingComponent"
+              },
+              "children": [
+                {
+                  "name": "/083d30a7-fa3f-4235-8097-e905fc6308a9/Project_Number/Default/Building_Name/L1",
+                  "attributes": {
+                    "entityGuid": "933c4a06-93b8-11d3-80f8-00c04f8efc2c",
+                    "entityType": "IfcBuildingStorey",
+                    "componentGuid": "c0b20a99-d9b7-1da8-4c7b-51589bb68cf8",
+                    "compositionType": "ELEMENT",
+                    "elevation": 0.0,
+                    "globalId": "2JF4e6axWHqu3u0C1FZlmi",
+                    "longName": "L1",
+                    "name": "L1",
+                    "objectType": "Level:1/4\" Head",
+                    "componentType": "IfcBuildingStoreyComponent"
+                  },
+                  "children": []
+                },
+                {
+                  "name": "/083d30a7-fa3f-4235-8097-e905fc6308a9/Project_Number/Default/Building_Name/L2",
+                  "attributes": {
+                    "entityGuid": "6341822b-d4f3-11d3-a039-0000863f33f9",
+                    "entityType": "IfcBuildingStorey",
+                    "componentGuid": "05e5fa2c-5b79-a450-72d7-ff58d84b5dc5",
+                    "compositionType": "ELEMENT",
+                    "elevation": 12.0,
+                    "globalId": "1ZGO8hrFCHqw0v0026FpFv",
+                    "longName": "L2",
+                    "name": "L2",
+                    "objectType": "Level:1/4\" Head",
+                    "componentType": "IfcBuildingStoreyComponent"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
